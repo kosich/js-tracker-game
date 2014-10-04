@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>game</title>
+        <meta charset="UTF-8"/>
+        <script type="text/javascript" src='lib/ext/jquery-2.0.3.js'></script>
+        <script type="text/javascript" src='lib/ext/underscore.js'></script>
+        <script type="text/javascript" src='lib/ext/backbone.js'></script> 
+        <!--script type="text/javascript" src='lib/ext/require.js'></script -->
+        <script type="text/javascript" src='lib/ext/pathfinding-browser.js'></script>
+        <script type="text/javascript" src='lib/ext/createjs.min.js'></script>
+        <script type="text/javascript" src='lib/geometry.js'></script> 
+        <script type="text/javascript" src='lib/fov.js'></script> 
+
+        <script type="text/javascript" src='helpers/helper.js'></script>
+
+        <script type="text/javascript" src='Actions/ActionStateMachine.js'></script>
+        <script type="text/javascript" src='Actions/ActionState.js'></script>
+
+        <script type="text/javascript" src='ObjectManager.js'></script>
+
+        <script type="text/javascript" src='Events.js'></script>
+
+        <script type="text/javascript" src='Objects/Basic.js'></script>
+        <script type="text/javascript" src='Objects/Guardian.js'></script>
+        <script type="text/javascript" src='Objects/Hero.js'></script>
+        <script type="text/javascript" src='Objects/Bullet.js'></script>
+
+        <script type="text/javascript" src='Maps/map1.js'></script>
+        <script type="text/javascript" src='Maps/maps.js'></script>
+        <script type="text/javascript" src='GM.js'></script>
+        <script type="text/javascript" src='main.js'></script>
+
+        <style>
+            body{
+                background-color: #193;
+            }     
+            a{
+                padding: 0.5em;
+                background-color:white;
+                font-weight:bold;
+                text-decoration:none;
+            }
+            a:hover{
+                background-color:#333;
+                color:#fff;
+            }
+        </style>
+    </head>
+    <body>
+        <canvas id='gamePane' ></canvas>
+        <a id='pause' href="#" >[p]</a>
+        <a id='restart' href='#'>[r]</a>
+    </body>
+</html>

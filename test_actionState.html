@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+    <head> 
+        <script type="text/javascript" src='lib/jquery-2.0.3.js'></script>
+
+        <script type="text/javascript" src='lib/underscore.js'></script>
+        <script type="text/javascript" src='lib/backbone.js'></script>
+
+        <script type="text/javascript" src='helpers/helper.js'></script>
+
+        <script type="text/javascript" src='Actions/ActionStateMachine.js'></script>
+        <script type="text/javascript" src='Actions/testAS.js'></script> 
+        <script>
+            var as = new AS.test({}, { target: { isAlive: true }});
+            console.log('time', as.time());
+            console.log('test', as.test());
+            var i = 2, d = new Date() + 0;
+
+            setTimeout(function fn(){
+                console.log('execute', as.execute());
+                if(--i<0)
+                    return;
+
+                var delta = new Date-d,
+                    d = new Date,
+                    afn = fn.bind(this, 10);
+                setTimeout(afn, 100);
+            }, 100);
+        </script>
+    </head>
+    <body></body>
+</html>

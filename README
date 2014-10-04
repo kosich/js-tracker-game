@@ -1,0 +1,12 @@
+CURRENT STATUS
+
++ fov
++ pathfinding on a [0,1] matrix
++ Action state machine (with shooting possibility)
++ hitting & killing guardians
+~ guardians shooting
+~ gameover
+- AI
+- level change
+- pick objects and use them
+- level logic
