@@ -1,0 +1,11 @@
+описание проекта
+
+/Objects        - игровые объекты
+/Actions        - возможные действия для eventmachine
+Events.js
+GM.js
+main.js
+maps.js
+
+/lib
+/helpers
