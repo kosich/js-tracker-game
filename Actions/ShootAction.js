@@ -39,7 +39,6 @@ var Shoot = ActionState.extend({
                 speed : 1000,
                 power: 10
             });
-            ObjectManager.add(bullet);
             return true;
         }
 
