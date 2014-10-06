@@ -25,9 +25,10 @@
         }));
     })();
 
+    window.debugging = 1;
+
     if(!window.debugging)
         window.console= { log: function(){} };
 
-    window.debugging = 0;
 
 })(window, document);

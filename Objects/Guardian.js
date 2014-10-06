@@ -32,17 +32,21 @@
         tick: function(delta){ 
             O.Basic.prototype.tick.apply(this, arguments);
 
-            //TODO: move to AI
+            //TODO: move to AI {{
+            /*
             if(this.vis.floorShape.hitTest(this.game.hero.g.x, this.game.hero.g.y))
                 if (!(this.asm.actionStack[0] instanceof Shoot))
                     this.shoot(this.game.hero);
+            */
+            //}}
         },
         watch: function(){ 
         },
         listen: function(){ 
             var self = this;
              //listening
-            this.map.on(Events.Sound.Basic, function(sender, soundStrength, x, y){
+            return;
+            game.map.on(Events.Sound.Basic, function(sender, soundStrength, x, y){
                 if(sender === self)
                     return;
                 var dist = Math.pow(Math.pow(self.g.x - x, 2) + Math.pow(self.g.y - y, 2), 0.5);

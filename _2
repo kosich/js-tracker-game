@@ -1,0 +1,52 @@
+
+        loadLevel: function loadLevel(level){ 
+            var self = this;
+
+
+
+            self.drawMap(self.level);
+            self.paused= true;
+
+            //# creating all the objects{{
+            debugger;
+            //}}
+
+
+            self.hero = new O.Hero();
+            self.hero.name = 'Hero';
+            self.hero.init(self, self.stage, self.level, '#2f6', self.level.spawnPoint[0], self.level.spawnPoint[1]);
+
+            self.pane.on('click', function(event){
+                var point = new geometry.Point(event.stageX, event.stageY);
+                if(event.nativeEvent.ctrlKey){
+                    self.hero.shoot(point);
+                } else {
+                    console.log('heading to' ,event.stageX, event.stageY);
+                    self.hero.targetTo(event.stageX, event.stageY);
+                    self.paused = false;
+                }
+            });
+
+            self.hero.on(Events.Move.attarget, function(){
+                self.paused = true;
+                console.log('im at target'); 
+            }); 
+
+            self.hero.on(Events.Action.Died, function(){
+                //todo: this.restart
+                game.loadLevel(Levels[0]);
+            }); 
+
+            self.level.on(Events.Sound.Basic, function(sender, x ,y){
+                //console.log('sounds at', x, y , 'sender:', sender); 
+            });
+
+            self.guardians.forEach(function(e, i, arr){
+                e.g.on('click', function(event){ 
+                    self.hero.shoot(e);
+                });
+            });
+
+            self.OM = ObjectManager;
+
+        },

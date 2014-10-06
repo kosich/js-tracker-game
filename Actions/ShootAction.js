@@ -31,14 +31,15 @@ var Shoot = ActionState.extend({
             var currentPoint = new geometry.Point(this.parent.g.x, this.parent.g.y),
                 angle =  currentPoint.angleToPoint(targetPoint);
 
-            game.OM.add("Bullet", { 
-                game : game,
+            var bullet = ObjectGenerator({ 
+                type: "O.Bullet", 
                 parent : this.parent,
-                startingPosition : currentPoint,
+                pos : currentPoint,
                 angle : angle,
-                speed : 100,
+                speed : 1000,
                 power: 10
             });
+            ObjectManager.add(bullet);
             return true;
         }
 

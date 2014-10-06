@@ -4,24 +4,15 @@
     var O = helper.defineNS('O'); 
     O.Bullet = Backbone.Model.extend({
         init: function(options){
-            this.parent = options.parent;
-            this.pos = options.startingPosition;
-            this.angle = options.angle;
-            this.speed = options.speed;
-            this.power = options.power;
-
-            //TODO: move to basic
-            this.game = options.game; 
 
             this._gameField = new geometry.Field(new geometry.Point(0, 0), 
-                                                 new geometry.Point(options.game.level.stageW, options.game.level.stageW));
+                                                 new geometry.Point(game.level.stageW, game.level.stageW));
 
+        },
+        graphics : function(){
             var bullet = this.g = new createjs.Shape();
-            bullet.graphics.beginFill('#dfd').drawCircle(0, 0, this.game.level.cellW/5, this.game.level.cellH/5);
-            bullet.x = this.pos.x;
-            bullet.y = this.pos.y;
-            this.game.level.stage.addChild(bullet);
-
+            bullet.graphics.beginFill('#dfd').drawCircle(0, 0, game.level.cellW/5, game.level.cellH/5);
+            return bullet;
         },
         tick: function(delta){
 
@@ -41,7 +32,7 @@
             }
 
             var lastTracePath = new geometry.Line(pos, this.pos),
-                walls = this.game.level.walls,
+                walls = game.level.walls,
                 hitPoints = [],
                 hitPoint;
 
@@ -53,15 +44,18 @@
                 hitPoints.push(lastTracePath.pointOfIntersection(walls[i]));
             }
 
-            this.game.guardians.forEach(function(guard){
-                //TODO: HERE BE THE GUARDIAN COLLISION DETECTION
-                if (guard == self.parent)
+            //TODO: refactor to OBJECTMANAGER  {{
+
+            ObjectManager.objects.forEach(function(object){
+                if (object == self || object == self.parent)
                     return;
 
-                hitPoint = guard.hitTest(lastTracePath);
+                hitPoint = object.hitTest(lastTracePath);
                 if (hitPoint) 
-                    hitPoints.push({ hitPoint: hitPoint, object: guard}); 
+                    hitPoints.push({ hitPoint: hitPoint, object: object}); 
             });
+
+            // }}
 
             if(hitPoints.length){
                 hitPoint = hitPoints.pop();
@@ -77,8 +71,8 @@
             this.g.y = this.pos.y;
         },
         destroy: function(){
-            this.game.OM.remove(this);
-            this.game.level.stage.removeChild(this.g);
+            ObjectManager.remove(this);
+            game.stage.removeChild(this.g);
         }
     });
     

@@ -1,0 +1,38 @@
+
+                this.hero.tick(event.delta);
+
+                this.guardians.forEach(function(e, i, arr){
+                    e.tick(event.delta); 
+                    //TODO: fucking rendering stuff. moveout!!!
+                    if(self.guardiansVisibleAreas[i])
+                        self.stage.removeChild(self.guardiansVisibleAreas[i]);
+                });
+
+                this.OM.objects && this.OM.objects.forEach(function(el){
+                    if(el && el.tick)
+                        el.tick(event.delta);
+                });
+
+                this.guardians = this.guardians.filter(function(e, i, arr){
+                    return e.isAlive;
+                });
+
+                this.guardians.forEach(function(e, i, arr){
+                    if(!self.hero.vis.floorShape.hitTest(e.g.x, e.g.y)){
+                        e.g.visible= false;
+                        return;
+                    } else{
+                        e.g.visible= true;
+                        self.guardiansVisibleAreas[i] = self.stage.addChild(e.vis.floorShape);
+                        self.guardiansVisibleAreas[i].visible=false;
+                    }
+                });
+
+                if(this.visibleArea)
+                    this.stage.removeChild(this.visibleArea);
+                this.visibleArea = this.stage.addChild(this.hero.vis.floorShape);
+
+                self.hero.vis.floorShape.visible=false;
+
+                this.time+=event.delta;
+                this.timeline.text = Math.floor(this.time/1000);
