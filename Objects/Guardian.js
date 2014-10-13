@@ -8,19 +8,18 @@
             O.Basic.prototype.init.apply(this, arguments);
             this.speed =this.speed/3;
 
-            this.currentMovementTargetIndex = -1;
-            this.set('movementArray', []);
-
+            this.currentMovementTargetIndex = -1; 
             this.on('change:movementArray', function(){
-                this.currentMovementTargetIndex= 0;
-                this.targetTo.apply(this, this.get('movementArray')[this.currentMovementTargetIndex]);
+                this.currentMovementTargetIndex = 0;
+                this.targetTo.call(this, this.get('movementArray')[this.currentMovementTargetIndex]);
             });
+            this.set('movementArray', this.walkingCoordinates); 
 
             this.on(Events.Move.attarget, function(){
                 this.currentMovementTargetIndex++;
                 if(this.currentMovementTargetIndex>=this.get('movementArray').length)
-                    this.currentMovementTargetIndex= 0;
-                this.targetTo.apply(this, this.get('movementArray')[this.currentMovementTargetIndex]);
+                    this.currentMovementTargetIndex = 0;
+                this.targetTo.call(this, this.get('movementArray')[this.currentMovementTargetIndex]);
             }); 
 
             this.listen();
@@ -39,6 +38,19 @@
                     this.shoot(this.game.hero);
             */
             //}}
+        },
+        graphics : function (){
+            var g = this.g = new createjs.Shape(),
+                s = this._hitradius;
+            
+            g.graphics.beginFill("#f35")
+                .beginStroke('black') 
+                .mt(1.5*s,0)
+                .lt(-s, s)
+                .lt(-s,-s)
+                .cp();
+
+            return g;
         },
         watch: function(){ 
         },

@@ -28,7 +28,7 @@ var MoveAction = ActionState.extend({
         } catch (e){
             console.log("failed", target);
         } finally{
-            console.log("executed");
+            //console.log("executed");
         }
     }
 });

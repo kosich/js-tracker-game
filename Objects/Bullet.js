@@ -5,14 +5,17 @@
     O.Bullet = Backbone.Model.extend({
         init: function(options){
 
+            //TODO: move to game init
             this._gameField = new geometry.Field(new geometry.Point(0, 0), 
                                                  new geometry.Point(game.level.stageW, game.level.stageW));
 
         },
         graphics : function(){
             var bullet = this.g = new createjs.Shape();
-            bullet.graphics.beginFill('#dfd').drawCircle(0, 0, game.level.cellW/5, game.level.cellH/5);
+            bullet.graphics.beginFill('#dfd').drawCircle(0, 0, game.level.cellW/15, game.level.cellH/15);
             return bullet;
+
+            //TODO: a bullet is drawn in 0,0 at first
         },
         tick: function(delta){
 
@@ -44,25 +47,34 @@
                 hitPoints.push(lastTracePath.pointOfIntersection(walls[i]));
             }
 
-            //TODO: refactor to OBJECTMANAGER  {{
-
+            //{{ 
             ObjectManager.objects.forEach(function(object){
-                if (object == self || object == self.parent)
+                if (object == self || object == self.parent || !object.hitTest)
                     return;
 
                 hitPoint = object.hitTest(lastTracePath);
-                if (hitPoint) 
+                if (hitPoint) {
+                    console.log("hitted a ", object.id);
                     hitPoints.push({ hitPoint: hitPoint, object: object}); 
-            });
-
+                }
+            }); 
             // }}
 
             if(hitPoints.length){
-                hitPoint = hitPoints.pop();
+
+                hitPoints.sort(function(a,b){
+                    return self.pos.squareDistanceToPoint(a) - self.pos.squareDistanceToPoint(b);
+                });
+
+                if(hitPoints.length>1)
+                    console.log(hitPoints);
+
+                hitPoint = hitPoints.shift();
 
                 if(hitPoint.object)
                     hitPoint.object.hit(this.power);
 
+                pos = hitPoint;
                 this.destroy();
             }
 

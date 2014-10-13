@@ -1,6 +1,8 @@
 (function(){
     'use strict';
 
+    helper.defineNS('PRECISION', 0.00001);
+
     var Game = Backbone.Model.extend({ 
         stage: null,
         hero: null,
@@ -21,14 +23,39 @@
             var point = new geometry.Point();
             point.x= c[0] * this.level.cellW + this.level.cellW/2;
             point.y= c[1] * this.level.cellH + this.level.cellH/2;
-            console.log('coordinates to point', point);
             return point;
-        }, 
+        },
         coordinatesFromPoint: function coordinatesFromPoint(point){
             return [
                 Math.ceil(point.x/game.level.cellW) -1 ,
                 Math.ceil(point.y/game.level.cellH) -1 
             ];
+        },
+        fieldFromCoordinates: function (coordinates){
+            return new geometry.Field(
+                new geometry.Point(coordinates[0] * this.level.cellW, coordinates[1] * this.level.cellH),
+                new geometry.Point((coordinates[0]+1) * this.level.cellW, (coordinates[1]+1) * this.level.cellH)
+            ); 
+        },
+        //}}
+        //Render statics{{ 
+        drawMap: function drawMap (level){
+            //TODO: remake to drawing images
+
+            //# drawing walls {{
+            for(var i =0; i<level.width; i++){
+                var subarray = level.map.field[i];
+                for(var j=0; j< level.height; j++) {
+                    if (subarray[j]){
+                        var box = new createjs.Shape();
+                        box.graphics.beginFill('#333').drawRect(0, 0, level.cellW, level.cellH);
+                        box.x = j*level.cellW;
+                        box.y = i*level.cellH;
+                        game.stage.addChild(box);
+                    }
+                }
+            }
+            //}} 
         },
         //}}
         loadLevel: function(level){
@@ -44,6 +71,8 @@
             this.pane = new createjs.Shape();
             this.pane.graphics.beginFill('#8af').drawRect(0,0, level.stageW, level.stageH); 
             this.stage.addChild(this.pane);
+
+            this.drawMap(level);
             //}}
 
             //create every object on a map
@@ -52,6 +81,10 @@
             });
 
             this.hero = ObjectManager.getByID("Hero");
+
+            self.level.on(Events.Sound.Basic, function(sender, x ,y){
+                //console.log('sounds at', x, y , 'sender:', sender); 
+            });
 
             //{{
             (function loadFOV(){
@@ -74,24 +107,31 @@
                     return [{p1: p1, p2:p2}, {p1: p2, p2:p3}, {p1: p3, p2:p4}, {p1: p4, p2:p1}];
                 } 
             })();
-            //}}
-
+            //}} 
 
             //INIT UI INTERACTIONS{{ 
             this.pane.on('click', function(event){
                 var point = new geometry.Point(event.stageX, event.stageY);
                 if(event.nativeEvent.ctrlKey){
                     self.hero.shoot(point);
-                } else {
-                    console.log('heading to' ,event.stageX, event.stageY);
-                    self.hero.targetTo(event.stageX, event.stageY);
-                    self.paused = false;
+                    return;
                 }
+
+                if(event.nativeEvent.shiftKey){
+                    self.hero.turn(event.stageX, event.stageY);
+                    return;
+                }
+                //console.log('heading to' ,event.stageX, event.stageY);
+                self.hero.targetTo(game.coordinatesFromPoint(new geometry.Point(event.stageX, event.stageY)));
+                self.paused = false;
             });
             //}}
 
+            //initing time tracking
+            this.time = 0;
+
             //init UI{{
-            this.timeline = new createjs.Text("", "13px Ubuntu", "#ff7700");
+            this.timeline = new createjs.Text("", "13px Ubuntu", "#f70");
             this.timeline.x = 10;
             this.timeline.y = 10;
             this.timeline.textBaseline = "top";
@@ -102,17 +142,33 @@
             createjs.Ticker.removeAllEventListeners();
             createjs.Ticker.addEventListener('tick', this.tick.bind(this));
             createjs.Ticker.timingMode = createjs.Ticker.RAF_SYNCHED;
-            createjs.Ticker.setFPS(60);
+            createjs.Ticker.setFPS(100);
 
         },
         tick: function tick(event){
             var self= this;
             if(!this.paused){
                 ObjectManager.objects.forEach(function(el){
+
                     el.tick(event.delta);
+                    if(el === self.hero)
+                        return;
+
+                    //check if objects are seen by the hero{{ 
+                    //TODO: check only on nonstatic objects
+                    el.g.visible = self.hero.vis.floorShape.hitTest(el.g.x, el.g.y); 
+                    self.hero.vis.floorShape.visible = false;
+                    //}}
                 });
+                self.time+=event.delta || 0;
             }
-            //this.stage.mask = self.hero.vis.floorShape;
+
+            this.timeline.text = Math.floor(this.time/1000) +':' + Math.floor((this.time % 1000)/100) + (this.paused?' [p]':'');
+
+            if(this.visibleArea)
+                this.stage.removeChild(this.visibleArea);
+            this.visibleArea = this.stage.addChild(this.hero.vis.floorShape);
+
             this.stage.update();
         },
         restart: function restart(){ 

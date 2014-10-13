@@ -1,4 +1,4 @@
-var Shoot = ActionState.extend({
+var ShootAction = ActionState.extend({
     time:function(){
         return 1000;
     },
@@ -6,7 +6,7 @@ var Shoot = ActionState.extend({
         //if current can shoot
         return true;
     },
-    shootRate: 1000,
+    shootRate: 100,
     execute:function(delta){
         if(!ActionState.prototype.execute.call(this, delta))
             return false;
@@ -18,27 +18,10 @@ var Shoot = ActionState.extend({
 
             //create a bullet
             this.resolve(); 
+
             console.log('BANG!');
+            this.parent.gun.shoot(this.options.target, this.parent);
 
-            var targetPoint,
-                target = this.options.target;
-
-            if (target instanceof geometry.Point)
-                targetPoint = target;
-            else
-                targetPoint = new geometry.Point(target.g.x, target.g.y);
-
-            var currentPoint = new geometry.Point(this.parent.g.x, this.parent.g.y),
-                angle =  currentPoint.angleToPoint(targetPoint);
-
-            var bullet = ObjectGenerator({ 
-                type: "O.Bullet", 
-                parent : this.parent,
-                pos : currentPoint,
-                angle : angle,
-                speed : 1000,
-                power: 10
-            });
             return true;
         }
 

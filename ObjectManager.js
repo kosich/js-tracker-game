@@ -6,6 +6,7 @@
             this.objects.push(object);
 
             object.init();
+
             //add graphics {{
             var g = object.graphics();
             game.stage.addChild(g);
@@ -15,7 +16,7 @@
                 g.y = point.y;
             }
             //}}
-
+            
             return this;
         }, 
         remove : function(object){
@@ -25,6 +26,7 @@
                 this.objects.splice(index, 1);
                 return true;
             }
+            game.stage.removeChild(object);
             return false;
         },
         getByID: function(id){
