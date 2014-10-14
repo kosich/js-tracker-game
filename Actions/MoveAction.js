@@ -1,7 +1,7 @@
 'use strict';
 var MoveAction = ActionState.extend({
-    initialize: function(parent, options){
-        var d = ActionState.prototype.initialize.apply(this, arguments); 
+    run : function(){
+        ActionState.prototype.run.apply(this, arguments); 
 
         //check if need to create path
         //and generate the path 
@@ -32,8 +32,6 @@ var MoveAction = ActionState.extend({
 
         if(canExecute)
             this.resolve();
-
-        return d;
     },
     time:function(){
         return 1000;

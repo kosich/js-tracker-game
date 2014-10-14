@@ -10,6 +10,7 @@
         graphics: function(){
             var g = this.g = new createjs.Shape();
             g.graphics.beginFill("#fa0").drawCircle(0,0, 10); 
+            g.alpha = 0.5;
             g.x = this.attributes.x;
             g.y = this.attributes.y;
             return g; 

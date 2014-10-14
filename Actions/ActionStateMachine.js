@@ -70,6 +70,9 @@ var Deferred = $.Deferred;
                 if(!this.currentAction)
                     return;
 
+                if (!this.currentAction.running)
+                    this.currentAction.run();
+
                 this.currentAction.execute(delta); 
             }
         };
@@ -82,12 +85,17 @@ var Deferred = $.Deferred;
     var ActionState =  Backbone.Model.extend({
         isInfinite : false,
         timeOfExecution : 0,
+        running: false,
         initialize: function(parent, options){
             this.deferred = new Deferred();
             this.parent = parent;
             this.options = options;
             this.promise = this.deferred.promise();
             return this.promise;//idk, this, mustbe, is a mistake: initialize is called inside the constructor
+        },
+        //TODO implement run, resume, pause and cancel
+        run : function(){
+            this.running = true;
         },
         test : function(){
             throw 'not implemented';

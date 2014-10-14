@@ -14,7 +14,6 @@ var DisappearAction = ActionState.extend({
         this.parent.g.alpha -= 0.2 * delta/1000;
         if(this.parent.g.alpha<=0){
             this.parent.destroy();
-            console.log('disappeared');
             return true; 
         }
     }
