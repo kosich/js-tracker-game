@@ -26,7 +26,6 @@ var MoveAction = ActionState.extend({
                 return false;
             }
 
-            console.log('calculated tha path well');
             self.path.shift();//remove current pos
             return true;
         })();
@@ -64,7 +63,6 @@ var MoveAction = ActionState.extend({
             var targetPoint = new geometry.Point(t[0], t[1]),
                 targetAngle = o.point().angleToPoint(targetPoint);
             if (!arithmetics.floatsAreEqual(o.angleOfView , targetAngle)){//diff between target angle and current angle of the subject is less then precision
-                console.log(o.angleOfView, targetAngle); 
                 o.turn(targetPoint, true);
                 return false;
             }

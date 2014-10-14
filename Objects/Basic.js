@@ -28,7 +28,6 @@
         graphics : function (){
             var g = this.g = new createjs.Shape();
             g.graphics.beginFill("red").drawCircle(0,0, this._hitradius);
-
             g.shadow = new createjs.Shadow("#000000", 0, 0, 5);
             return g;
         },
@@ -74,7 +73,6 @@
         turn : function(point, immediate){
             //TODO possible accepted args: Point, {x,y}, Angle, angle
             var heroPoint = new geometry.Point(this.g.x,this.g.y);
-            console.log('turning ', immediate);
             this.asm.add(new TurnAction(this, {
                 angle: heroPoint.angleToPoint(point)
             }), immediate);
