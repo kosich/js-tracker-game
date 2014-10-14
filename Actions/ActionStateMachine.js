@@ -4,12 +4,27 @@ var Deferred = $.Deferred;
     var ActionStateMachine = (function(){ 
         return {
             actionStack : [],
+            /* 
+             * adds an action to the LAST position of the stack
+             */
+            queque : function(action){
+                if (!(action instanceof ActionState)){
+                    throw 'pass the proper action here'; 
+                }
+                this.actionStack.unshift(action); 
+            },
+            /* 
+             * adds an action to the FIRST position of the stack
+             */
             push : function(action){
-                //if(!(action is Action))
-                //throw 'pass the proper action here';
-
+                if (!(action instanceof ActionState)){
+                    throw 'pass the proper action here'; 
+                }
                 this.actionStack.push(action); 
             },
+            /*
+             * returns current action and removes it from the stack
+             */
             pop : function(){
                 if(!this.actionStack.length)
                     return;

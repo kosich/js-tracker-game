@@ -2,7 +2,7 @@ Current status
 
 + fov
 + pathfinding on a [0,1] matrix
-+ Action state machine (with shooting possibility)
++ Action state machine (with shooting posibility)
 + hitting & killing guardians
 ~ guardians shooting
 ~ gameover

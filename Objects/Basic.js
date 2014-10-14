@@ -3,7 +3,6 @@
 
     var O = helper.defineNS('O'); 
     O.Basic = Backbone.Model.extend({
-
         speed: null,
         health: 100,
         isAlive: true,
@@ -60,20 +59,37 @@
             this.vis.floorShape = new createjs.Shape();
             this.vis.floorShape.name = this.id;
 
-            var minAngle = restrictNumber(this.angleOfView-this.rangeOfView/2, -Math.PI , Math.PI);
-            var maxAngle = restrictNumber(this.angleOfView+this.rangeOfView/2, -Math.PI , Math.PI);
+            var minAngle = arithmetics.restrictNumber(this.angleOfView-this.rangeOfView/2, -Math.PI , Math.PI);
+            var maxAngle = arithmetics.restrictNumber(this.angleOfView+this.rangeOfView/2, -Math.PI , Math.PI);
 
             this.visibilityArea = game.fov.calc(minAngle, maxAngle);
 
             drawVisibilityArea(this.vis.floorShape.graphics, this.visibilityArea, center);
         },   
         vis : null,
-        turn : function(x, y){
-            //TODO: move to asm
-            this.angleOfView = Math.atan2(y - this.g.y, x - this.g.x);
-            //this.angleOfView = restrictNumber(this.angleOfView, -Math.PI , Math.PI);
-            this.g.rotation =  180 * this.angleOfView / Math.PI;
+        //ASM actions {{
+        turn : function(point){
+            //TODO possible accepted args: Point, {x,y}, Angle, angle
+            var heroPoint = new geometry.Point(this.g.x,this.g.y);
+            this.asm.queque(new TurnAction(this, {
+                angle: heroPoint.angleToPoint(point)
+            }));
         },
+        targetTo : function targetTo(coordinates){
+            //console.log('going to walk');
+            var aMove = new MoveAction(this, {
+                target: coordinates
+            }); 
+            this.asm.queque(aMove);
+        },
+        shoot: function(target){
+            //console.log('going to shoot');
+            var aShot = new ShootAction(this, {
+                target: target
+            }); 
+            this.asm.queque(aShot);
+        },
+        //}}
         move : function(delta){ 
             //TODO: move to asm
             if (!(this.path && this.path.length))
@@ -82,7 +98,7 @@
             var joint = this.pos = this.path[0];
             var t = [joint[0] * game.level.cellW + game.level.cellW/2, joint[1] * game.level.cellH + game.level.cellH/2];
 
-            this.turn(t[0], t[1]);
+            this.turn(new geometry.Point(t[0], t[1]));
 
             var sx = t[0] - this.g.x,
             sy = t[1] - this.g.y;
@@ -100,8 +116,9 @@
 
             //TRIGGERING EVENTS
             //sound
-            var soundStrength = 5;
-            game.level.trigger(Events.Sound.Basic, this /*sender*/, soundStrength, this.g.x, this.g.y);
+            var soundStrength = 6;//TODO combine sound strength with position of the character and its stelth abilities (or whatever)
+            if (Math.random()<0.01)//10% to emit sound
+                game.level.trigger(Events.Sound.Basic, this /*sender*/, soundStrength, this.g.x, this.g.y);
 
             //At point
             if (this.g.x=== t[0]&& this.g.y===t[1]){
@@ -109,20 +126,6 @@
                 if (this.path.length === 0)
                     this.trigger(Events.Move.attarget);
             }
-        },
-        targetTo : function targetTo(coordinates){
-            //console.log('going to walk');
-            var aMove  = new MoveAction(this, {
-                target: coordinates
-            }); 
-            this.asm.push(aMove);
-        },
-        shoot: function(target){
-            //console.log('going to shoot');
-            var aShot = new ShootAction(this, {
-                target: target
-            }); 
-            this.asm.push(aShot);
         },
         hitTest: function(object){
             //TODO: add object type check
@@ -137,25 +140,6 @@
             return null;
         }
     });
-
-    function restrictNumber(n, min, max){
-        if(min>max)
-            throw 'make sure to pass min>=max .. ' + [min, max].join(',');
-
-        if(n>=min && n<=max)
-            return n;
-
-        if(min!=0) {
-            var d = 0-min;
-            return restrictNumber(n+d, min+d, max+d) - d;
-        }
-
-        n = n % max;
-        if(n<0)
-            return max+n;
-
-        return n;
-    }
 
     function drawVisibilityArea(g, path, center) {
         var i = path.length-1, startPoint = path[i], point;

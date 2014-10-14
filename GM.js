@@ -48,7 +48,7 @@
                 for(var j=0; j< level.height; j++) {
                     if (subarray[j]){
                         var box = new createjs.Shape();
-                        box.graphics.beginFill('#333').drawRect(0, 0, level.cellW, level.cellH);
+                        box.graphics.beginFill('#777').drawRect(0, 0, level.cellW, level.cellH);
                         box.x = j*level.cellW;
                         box.y = i*level.cellH;
                         game.stage.addChild(box);
@@ -69,7 +69,7 @@
 
             //init rendering {{
             this.pane = new createjs.Shape();
-            this.pane.graphics.beginFill('#8af').drawRect(0,0, level.stageW, level.stageH); 
+            this.pane.graphics.beginFill('#aaa').drawRect(0,0, level.stageW, level.stageH); 
             this.stage.addChild(this.pane);
 
             this.drawMap(level);
@@ -82,8 +82,31 @@
 
             this.hero = ObjectManager.getByID("Hero");
 
-            self.level.on(Events.Sound.Basic, function(sender, x ,y){
-                //console.log('sounds at', x, y , 'sender:', sender); 
+            self.level.on(Events.Sound.Basic, function(sender, strength, x, y){
+                //TODO: check if sound is close enough
+                    ; 
+                if (Math.random()<0.1 
+                    && !self.hero.vis.floorShape.hitTest(sender.g.x, sender.g.y))//10% to hear the sound
+                {
+                    //console.log('sound @ ', x, y);
+                    ObjectManager.add({
+                        init: function(){
+                            this.asm = Object.create(ActionStateMachine);
+                            this.asm.push(new DisappearAction(this));
+                        },
+                        graphics: function(){
+                            var g = this.g = new createjs.Shape();
+                            g.graphics.beginFill("red").drawCircle(0,0, 10); 
+                            g.shadow = new createjs.Shadow("#000000", 0, 0, 5);
+                            g.x = x;
+                            g.y = y;
+                            return g; 
+                        },
+                        tick : function(delta){ 
+                            this.asm.tick(delta);
+                        }
+                    });
+                }
             });
 
             //{{
@@ -113,12 +136,13 @@
             this.pane.on('click', function(event){
                 var point = new geometry.Point(event.stageX, event.stageY);
                 if(event.nativeEvent.ctrlKey){
+                    self.hero.turn(point);
                     self.hero.shoot(point);
                     return;
                 }
 
                 if(event.nativeEvent.shiftKey){
-                    self.hero.turn(event.stageX, event.stageY);
+                    self.hero.turn(point);
                     return;
                 }
                 //console.log('heading to' ,event.stageX, event.stageY);
