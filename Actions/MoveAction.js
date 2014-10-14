@@ -1,3 +1,4 @@
+'use strict';
 var MoveAction = ActionState.extend({
     initialize: function(parent, options){
         var d = ActionState.prototype.initialize.apply(this, arguments); 
@@ -46,8 +47,6 @@ var MoveAction = ActionState.extend({
         if(!ActionState.prototype.execute.call(this, delta))
             return false;
 
-        console.log('moving');
-
         var o = this.parent,
             self = this;
         if (!(this.path && this.path.length)){
@@ -61,6 +60,7 @@ var MoveAction = ActionState.extend({
             var joint = o.pos = self.path[0];
             var t = [joint[0] * game.level.cellW + game.level.cellW/2, joint[1] * game.level.cellH + game.level.cellH/2];
 
+            //insert the turn action if needed{{
             var targetPoint = new geometry.Point(t[0], t[1]),
                 targetAngle = o.point().angleToPoint(targetPoint);
             if (!arithmetics.floatsAreEqual(o.angleOfView , targetAngle)){//diff between target angle and current angle of the subject is less then precision
@@ -68,6 +68,7 @@ var MoveAction = ActionState.extend({
                 o.turn(targetPoint, true);
                 return false;
             }
+            //}}
 
             var sx = t[0] - o.g.x,
             sy = t[1] - o.g.y;

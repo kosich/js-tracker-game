@@ -25,10 +25,30 @@
         }));
     })();
 
-    window.debugging = 1;
+    window.debugging = true;
+    window.bunchLogging = true;
+    window.bunchLoggingFreq = 1000;
 
-    if(!window.debugging)
-        window.console= { log: function(){} };
+    var log = window.console.log.bind(window.console);
+    var logStack = [];
+    window.console.log = function(){
+        if(!window.debugging)
+            return;
+
+        if (!window.bunchLogging)
+            log.apply(window.console, arguments);
+
+        if (!logStack.length)
+            window.setTimeout(function(){
+                log('logging ', logStack.length, ' items');
+                //log every msg stacked
+                log.apply(window.console, logStack); 
+                logStack.splice(0);//clear log stack 
+            }, window.bunchLoggingFreq);
+        logStack = logStack.concat(Array.prototype.splice.call(arguments, 0));
+        logStack.push('\r\n');
+
+    };
 
 
 })(window, document);

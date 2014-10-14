@@ -1,4 +1,5 @@
-var Deferred = $.Deferred;
+'use strict';
+var Deferred = $.Deferred; 
 
 (function(){
     var ActionStateMachine = (function(){ 

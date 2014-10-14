@@ -1,3 +1,4 @@
+'use strict';
 var ShootAction = ActionState.extend({
     time:function(){
         return 1000;

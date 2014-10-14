@@ -3,6 +3,7 @@
     var O = helper.defineNS('O');
 
     O.Hero = O.Basic.extend({
+        turningSpeed : Math.PI*4,
         init: function() {
             O.Basic.prototype.init.apply(this, arguments);
 

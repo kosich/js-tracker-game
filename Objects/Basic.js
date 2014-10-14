@@ -4,6 +4,7 @@
     var O = helper.defineNS('O'); 
     O.Basic = Backbone.Model.extend({
         speed: null,
+        turningSpeed : Math.PI,
         health: 100,
         isAlive: true,
         rangeOfView : Math.PI,
@@ -17,9 +18,10 @@
 
             this.asm = new ActionStateMachine();
 
-            this._hitradius = (game.level.cellH+game.level.cellW)/6;
+            //TODO make pixel-indefferent measurement system
+            this._hitradius = (game.level.cellH + game.level.cellW)/6;
 
-            this.speed = Math.ceil(game.level.cellH/9);
+            this.speed = this.speed || Math.ceil(game.level.cellH/9);
             
             this.vis={};
         },

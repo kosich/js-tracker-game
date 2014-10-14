@@ -84,28 +84,11 @@
 
             self.level.on(Events.Sound.Basic, function(sender, strength, x, y){
                 //TODO: check if sound is close enough
-                    ; 
-                if (Math.random()<0.1 
-                    && !self.hero.vis.floorShape.hitTest(sender.g.x, sender.g.y))//10% to hear the sound
+                if (Math.random()<0.1 //10% to hear the sound
+                    && !self.hero.vis.floorShape.hitTest(sender.g.x, sender.g.y))//and only when the emitter is not seen
                 {
                     //console.log('sound @ ', x, y);
-                    ObjectManager.add({
-                        init: function(){
-                            this.asm = Object.create(ActionStateMachine);
-                            this.asm.push(new DisappearAction(this));
-                        },
-                        graphics: function(){
-                            var g = this.g = new createjs.Shape();
-                            g.graphics.beginFill("red").drawCircle(0,0, 10); 
-                            g.shadow = new createjs.Shadow("#000000", 0, 0, 5);
-                            g.x = x;
-                            g.y = y;
-                            return g; 
-                        },
-                        tick : function(delta){ 
-                            this.asm.tick(delta);
-                        }
-                    });
+                    ObjectManager.add(new O.SoundMark({x:x, y:y}));
                 }
             });
 
@@ -180,7 +163,13 @@
 
                     //check if objects are seen by the hero{{ 
                     //TODO: check only on nonstatic objects
-                    el.g.visible = self.hero.vis.floorShape.hitTest(el.g.x, el.g.y); 
+                    var visible = self.hero.vis.floorShape.hitTest(el.g.x, el.g.y); 
+                    if (el instanceof O.SoundMark){
+                        if (visible)
+                            el.g.visible = false;
+                    } else 
+                        el.g.visible = visible;
+
                     self.hero.vis.floorShape.visible = false;
                     //}}
                 });
