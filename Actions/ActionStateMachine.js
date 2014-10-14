@@ -2,8 +2,10 @@ var Deferred = $.Deferred;
 
 (function(){
     var ActionStateMachine = (function(){ 
-        return {
-            actionStack : [],
+        function ActionStateMachine(){
+            this.actionStack = [];
+        }
+        ActionStateMachine.prototype = { 
             /* 
              * adds an action to the LAST position of the stack
              */
@@ -23,8 +25,24 @@ var Deferred = $.Deferred;
                 this.actionStack.push(action); 
             },
             /*
-             * returns current action and removes it from the stack
+             *  pushes or enqueques the action
              */
+            add : function(action, immediate){
+                if (immediate)
+                    this.push(action);
+                else
+                    this.queque(action);
+
+                action.promise.then(this.remove.bind(this, action));
+            },
+            remove : function(action){ 
+                var index = this.actionStack.indexOf(action);
+                if (index<0)
+                    return false; //hasnt been removed
+                this.actionStack.splice(index,1);
+            },
+            /*
+             * returns current action and removes it from the stack
             pop : function(){
                 if(!this.actionStack.length)
                     return;
@@ -34,10 +52,19 @@ var Deferred = $.Deferred;
 
                 return this.actionStack.pop(); 
             },
+             */
+            get currentAction(){
+                if(!this.actionStack.length)
+                    return;
+
+                return this.actionStack[this.actionStack.length-1];
+            },
             tick : function(delta){
+                /*
                 if(!this.currentAction || (this.currentAction.succeed || this.currentAction.failed)){
                     this.currentAction = this.pop();
                 }
+                */
 
                 if(!this.currentAction)
                     return;
@@ -45,6 +72,10 @@ var Deferred = $.Deferred;
                 this.currentAction.execute(delta); 
             }
         };
+
+        ActionStateMachine.prototype.constructor = ActionStateMachine;
+
+        return ActionStateMachine;
     })(); 
 
     var ActionState =  Backbone.Model.extend({
@@ -54,7 +85,8 @@ var Deferred = $.Deferred;
             this.deferred = new Deferred();
             this.parent = parent;
             this.options = options;
-            return this.deferred.promise();
+            this.promise = this.deferred.promise();
+            return this.promise;//idk, this, mustbe, is a mistake: initialize is called inside the constructor
         },
         test : function(){
             throw 'not implemented';

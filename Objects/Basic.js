@@ -15,12 +15,12 @@
                 console.warn('due to js low precision fov computations might be wrong', this.rangeOfView - 2*Math.PI);
             }
 
-            this.asm = Object.create(ActionStateMachine);
+            this.asm = new ActionStateMachine();
 
             this._hitradius = (game.level.cellH+game.level.cellW)/6;
 
             this.speed = Math.ceil(game.level.cellH/9);
-
+            
             this.vis={};
         },
         graphics : function (){
@@ -50,8 +50,6 @@
 
             this.asm.tick(delta);
 
-            this.move();
-
             //FOV computations 
             var center = {x:this.g.x, y:this.g.y};
             game.fov.setCenter(center);
@@ -67,66 +65,33 @@
             drawVisibilityArea(this.vis.floorShape.graphics, this.visibilityArea, center);
         },   
         vis : null,
+        point : function(){
+            return new geometry.Point(this.g.x,this.g.y);
+        },
         //ASM actions {{
-        turn : function(point){
+        turn : function(point, immediate){
             //TODO possible accepted args: Point, {x,y}, Angle, angle
             var heroPoint = new geometry.Point(this.g.x,this.g.y);
-            this.asm.queque(new TurnAction(this, {
+            console.log('turning ', immediate);
+            this.asm.add(new TurnAction(this, {
                 angle: heroPoint.angleToPoint(point)
-            }));
+            }), immediate);
         },
-        targetTo : function targetTo(coordinates){
+        targetTo : function targetTo(coordinates, immediate){
             //console.log('going to walk');
             var aMove = new MoveAction(this, {
                 target: coordinates
             }); 
-            this.asm.queque(aMove);
+            this.asm.add(aMove, immediate);
         },
-        shoot: function(target){
+        shoot: function(target, immediate){
             //console.log('going to shoot');
             var aShot = new ShootAction(this, {
                 target: target
             }); 
-            this.asm.queque(aShot);
+            this.asm.add(aShot, immediate);
         },
         //}}
-        move : function(delta){ 
-            //TODO: move to asm
-            if (!(this.path && this.path.length))
-                return;
-
-            var joint = this.pos = this.path[0];
-            var t = [joint[0] * game.level.cellW + game.level.cellW/2, joint[1] * game.level.cellH + game.level.cellH/2];
-
-            this.turn(new geometry.Point(t[0], t[1]));
-
-            var sx = t[0] - this.g.x,
-            sy = t[1] - this.g.y;
-
-            var l = Math.sqrt(Math.pow(sx, 2) + Math.pow(sy, 2))||0;
-
-            if (l<this.speed){
-                this.g.x = t[0];
-                this.g.y = t[1];
-            } else {
-                var k = this.speed/l;
-                this.g.x += sx * k;
-                this.g.y += sy * k;
-            }
-
-            //TRIGGERING EVENTS
-            //sound
-            var soundStrength = 6;//TODO combine sound strength with position of the character and its stelth abilities (or whatever)
-            if (Math.random()<0.01)//10% to emit sound
-                game.level.trigger(Events.Sound.Basic, this /*sender*/, soundStrength, this.g.x, this.g.y);
-
-            //At point
-            if (this.g.x=== t[0]&& this.g.y===t[1]){
-                this.path.shift();
-                if (this.path.length === 0)
-                    this.trigger(Events.Move.attarget);
-            }
-        },
         hitTest: function(object){
             //TODO: add object type check
 

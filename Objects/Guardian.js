@@ -13,7 +13,12 @@
                 this.currentMovementTargetIndex = 0;
                 this.targetTo.call(this, this.get('movementArray')[this.currentMovementTargetIndex]);
             });
-            this.set('movementArray', this.walkingCoordinates); 
+
+            window.setTimeout(function(){
+            //WARN dirty hack!!
+            //TODO refactor
+            self.set('movementArray', self.walkingCoordinates); 
+            }, 4);
 
             this.on(Events.Move.attarget, function(){
                 this.currentMovementTargetIndex++;
@@ -23,10 +28,6 @@
             }); 
 
             this.listen();
-        },
-        move : function(delta){ 
-            //console.log('moving to', this.target);
-            O.Basic.prototype.move.apply(this, arguments);
         },
         tick: function(delta){ 
             O.Basic.prototype.tick.apply(this, arguments);
@@ -53,11 +54,13 @@
             return g;
         },
         watch: function(){ 
+            //TODO: move to AI {{
         },
         listen: function(){ 
-            var self = this;
-             //listening
+            //TODO: move to AI {{
             return;
+
+            var self = this;
             game.map.on(Events.Sound.Basic, function(sender, soundStrength, x, y){
                 if(sender === self)
                     return;

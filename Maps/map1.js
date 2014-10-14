@@ -10,7 +10,6 @@
                 type : "Pistol"
             }]
         },
-        /*
         {
             id : "Guardian",
             type : "O.Guardian",
@@ -22,7 +21,6 @@
                 opens : "Exit"
             }]
         },
-        */
         {
             id : "Exit",
             type : "O.Exit",
