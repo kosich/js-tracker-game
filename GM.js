@@ -67,6 +67,8 @@
             this.stage.removeAllChildren();
             this.stage.clear();
 
+            ObjectManager.clear();
+
             //init rendering {{
             this.pane = new createjs.Shape();
             this.pane.graphics.beginFill('#aaa').drawRect(0,0, level.stageW, level.stageH); 

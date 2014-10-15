@@ -19,6 +19,9 @@
             
             return this;
         }, 
+        clear: function(){
+            this.objects.splice(0);
+        },
         remove : function(object){
             //TODO: remove from canvas if renderable
             var index = this.objects.indexOf(object);

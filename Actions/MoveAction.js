@@ -50,6 +50,7 @@ var MoveAction = ActionState.extend({
             this.resolve();
             return true;
         }
+
         move(delta);
 
         function move(delta){ 

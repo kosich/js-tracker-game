@@ -39,12 +39,16 @@
                 return;
             }
 
-            this.isAlive = false;
-            ObjectManager.remove(this.g);
-            console.log(this.id, ' just died');
-            this.trigger(Events.Action.Died);
+            this.destroy();
             return; 
         },
+        destroy: function(){
+            console.log(this.id, ' just died');
+            this.isAlive = false;
+            this.trigger(Events.Action.Died);
+            ObjectManager.remove(this);
+            game.stage.removeChild(this.g);
+        } ,
         tick : function tick(delta){
             if (!this.isAlive)
                 return;
