@@ -36,6 +36,12 @@ var Deferred = $.Deferred;
 
                 action.promise.then(this.remove.bind(this, action));
             },
+            clear : function clear(){ 
+                this.actionStack.splice(0);
+            },
+            hasActions : function hasActions(){
+                return !!this.actionStack.length;
+            },
             remove : function(action){ 
                 var index = this.actionStack.indexOf(action);
                 if (index<0)

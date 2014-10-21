@@ -43,9 +43,9 @@
             //TODO: remake to drawing images
 
             //# drawing walls {{
-            for(var i =0; i<level.width; i++){
+            for(var i =0; i<level.height; i++){
                 var subarray = level.map.field[i];
-                for(var j=0; j< level.height; j++) {
+                for(var j=0; j< level.width; j++) {
                     if (subarray[j]){
                         var box = new createjs.Shape();
                         box.graphics.beginFill('#777').drawRect(0, 0, level.cellW, level.cellH);
@@ -61,8 +61,6 @@
         loadLevel: function(level){
             var self = this;
             this.level=level;
-            var map = maps[0];
-            this.level.map = map;
             //clear the map
             this.stage.removeAllChildren();
             this.stage.clear();
@@ -78,7 +76,7 @@
             //}}
 
             //create every object on a map
-            map.objects.forEach(function(el){ 
+            level.map.objects.forEach(function(el){ 
                 var object = ObjectGenerator(el);
             });
 
@@ -99,7 +97,7 @@
                 self.fov = self.fov || new FOV();
                 var walls = [];
 
-                map.field.forEach(function(el, y, arr){
+                level.map.field.forEach(function(el, y, arr){
                     el.forEach(function(value, x){
                         if (value===1)
                             walls = walls.concat(createBox(x*self.level.cellW + self.level.cellW/2, y*self.level.cellH + self.level.cellH/2, self.level.cellH/2));
@@ -134,6 +132,28 @@
                 self.hero.targetTo(game.coordinatesFromPoint(new geometry.Point(event.stageX, event.stageY)));
                 self.paused = false;
             });
+            /*
+            //TODO implement following logic
+            //attack guardian
+            self.guardians.forEach(function(e, i, arr){
+                e.g.on('click', function(event){ 
+                    self.hero.shoot(e);
+                });
+            });
+
+            //pause game on tasks complete
+            self.hero.on(Events.Move.attarget, function(){
+                self.paused = true;
+                console.log('im at target'); 
+            }); 
+
+           //end the game on hero died
+            self.hero.on(Events.Action.Died, function(){
+                //todo: this.restart
+                game.loadLevel(Levels[0]);
+            }); 
+            */
+
             //}}
 
             //initing time tracking
@@ -157,12 +177,20 @@
         tick: function tick(event){
             var self= this;
             if(!this.paused){
+                ObjectManager.AIs.forEach(function(ai){ 
+                    ai.tick(event.delta);
+                });
+
                 ObjectManager.objects.forEach(function(el){
 
                     el.tick(event.delta);
                     if(el === self.hero)
                         return;
 
+                    if (!self.hero.isAlive){
+                        el.g.visible = true;
+                        return;
+                    }
                     //check if objects are seen by the hero{{ 
                     //TODO: check only on nonstatic objects
                     var visible = self.hero.vis.floorShape.hitTest(el.g.x, el.g.y); 

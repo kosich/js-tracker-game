@@ -21,7 +21,7 @@
             //TODO make pixel-indefferent measurement system
             this._hitradius = (game.level.cellH + game.level.cellW)/6;
 
-            this.speed = this.speed || Math.ceil(game.level.cellH/9);
+            this.speed = this.speed * Math.ceil(game.level.cellH/9);
             
             this.vis={};
         },
@@ -74,6 +74,13 @@
             return new geometry.Point(this.g.x,this.g.y);
         },
         //ASM actions {{
+        asmClear : function clearASM(){
+            this.asm.clear();
+            return this;
+        },
+        asmHasActions : function asmHasActions(){
+            return this.asm.hasActions();
+        },
         turn : function(point, immediate){
             //TODO possible accepted args: Point, {x,y}, Angle, angle
             var heroPoint = new geometry.Point(this.g.x,this.g.y);

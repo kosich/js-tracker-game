@@ -1,13 +1,15 @@
 (function(window, document, undefined){
     var levels = helper.defineNS('Levels', []);
     var level1 = (function(){
-        var map=  maps[0],
-         field = map.field,
-         l = field.length;
+        var map = maps[0],
+            field = map.field,
+            l = field.length,
+            w = field[0].length;
 
         return _.extend({
+            map : map,
             height : l,
-            width : l,
+            width : w,
             get stageH (){
                 return game.stage.canvas.height;
             },
@@ -19,8 +21,7 @@
             },
             get cellW (){
                 return game.level.stageW / game.level.width;
-            },
-            guardians : []
+            }
         }, Backbone.Events); 
     })();
     levels.push(level1);
