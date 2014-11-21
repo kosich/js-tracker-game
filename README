@@ -1,4 +1,18 @@
-Current status
+#smart pause js game
+
+/Objects        - игровые объекты
+/Actions        - возможные действия для eventmachine
+Events.js
+GM.js
+main.js
+maps.js
+
+/lib
+/helpers
+
+
+
+#Current status
 
 + fov
 + pathfinding on a [0,1] matrix
