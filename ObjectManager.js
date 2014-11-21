@@ -27,7 +27,6 @@
                     }
                 }
             }
-
             //}}
             
             return this;
@@ -49,6 +48,11 @@
             return this.objects.find(function(el){
                 return el.id == id;
             });
+        },
+
+        move : function(){},
+        getItems : function(){
+
         }
     }
     helper.defineNS("ObjectManager", om);

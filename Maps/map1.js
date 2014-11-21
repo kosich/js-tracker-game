@@ -14,13 +14,14 @@
             id : "Guardian 1",
             type : "O.Guardian",
             coordinates : [1, 3],
-            walkingCoordinates : [[0,0], [7,1], [5,6], [10,10], [0,9]],
+            walkingCoordinates : [[0,0], [1,1], [9,1], [1,10], [0,9]],
             has: [{
                 id : "Exit key",
                 type : "O.Key",
                 opens : "Exit"
             }]
         },
+        /*
         {
             id : "Guardian 2",
             type : "O.Guardian",
@@ -36,6 +37,7 @@
             coordinates : [3, 1],
             walkingCoordinates : [[2,2], [6,6], [0,6], [10,10], [0,9]]
         },
+        */
         {
             id : "Exit",
             type : "O.Exit",

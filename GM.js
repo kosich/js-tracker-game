@@ -132,6 +132,16 @@
                 self.hero.targetTo(game.coordinatesFromPoint(new geometry.Point(event.stageX, event.stageY)));
                 self.paused = false;
             });
+
+            //inventory
+            $(window).keydown(function(e){ 
+                var inventoryKeys = ['i', 'I'];
+                if (inventoryKeys.indexOf(e.key)>=0){
+                    inventory.init(game.hero);
+                } else 
+                    console.log(e);
+            });
+
             /*
             //TODO implement following logic
             //attack guardian
